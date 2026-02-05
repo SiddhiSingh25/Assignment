@@ -6,5 +6,7 @@ Library : Yup for validation, sweetalert2 for error and Success message, bootstr
 
 #How to run the project 
 
-npm install  [install dependency]
-npm run dev [Run the project]
+npm install  [install dependency] <br>
+npm run dev [Run the project]<br>
+open in brwser : http://localhost5173
+

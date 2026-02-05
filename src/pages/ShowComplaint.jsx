@@ -41,7 +41,7 @@ const ShowComplaint = () => {
         <div className="col-lg-10">
           <div className="card shadow-lg border-0 rounded-4">
             <div className="card-body p-4">
-              <h3 className="text-center fw-bold text-primary mb-4">
+              <h3 className="text-center fw-bold text-info mb-4">
                 Complaint List
               </h3>
 

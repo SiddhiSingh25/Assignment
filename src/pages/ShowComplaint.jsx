@@ -3,71 +3,118 @@ import React, { useEffect, useState } from "react";
 
 const ShowComplaint = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const showData = async () => {
-    let res = await axios.get(
-      "https://api.joincroose.com/croose/api/complain/list",
-    );
-    if (res) {
-      setData(res.data);
-      setLoading(false)
+    try {
+      const res = await axios.get(
+        "https://api.joincroose.com/croose/api/complain/list"
+      );
+      setData(res.data || []);
+    } catch (err) {
+      setError("Unable to fetch complaints");
+    } finally {
+      setLoading(false);
     }
-    
   };
+
   useEffect(() => {
     showData();
   }, []);
 
+  const statusBadge = (status) => {
+    if (status === "open") return "badge bg-warning";
+    if (status === "closed") return "badge bg-success";
+    return "badge bg-secondary";
+  };
+
+  const priorityBadge = (priority) => {
+    if (priority === "high") return "badge bg-danger";
+    if (priority === "medium") return "badge bg-info";
+    return "badge bg-secondary";
+  };
+
   return (
-    <div className="container-fluid min-vh-100 gradient">
-      
-      <div className="row h-100 d-flex align-items-start justify-content-center">
-        <div className="col-sm-6 mt-5">
-              <h1 className="text-center mb-3 text-info"> Complaint List</h1>
+    <div className="container min-vh-100 py-5">
+      <div className="row justify-content-center">
+        <div className="col-lg-10">
+          <div className="card shadow-lg border-0 rounded-4">
+            <div className="card-body p-4">
+              <h3 className="text-center fw-bold text-primary mb-4">
+                Complaint List
+              </h3>
 
-
-          <table className="table p-5 rounded ">
-            <thead className="table-dark">
-              <tr>
-                <th scope="col">Sr No.</th>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col">Priority</th>
-                <th scope="col">Status</th>
-                <th scope="col">Type</th>
-              </tr>
-            </thead>
-
-            <tbody className="w-full">
-              <tr>
-                <td colSpan="6">
-                  {loading && <div className="py-3 text-center fw-bold w-full">Loading....</div> }
-                </td>
-              </tr>
-              
-              {data === null ? (
-                <p>Cannot fetch data from the Server</p> ? (
-                  data?.length === 0
-                ) : (
-                  <p>Loading....</p>
-                )
-              ) : (
-                data.map((item, idx) => {
-                  return (
-                    <tr key={item.id}>
-                      <th scope="row">{idx+1}</th>
-                      <td>{item?.title}</td>
-                      <td>{item?.description}</td>
-                      <td>{item?.priority}</td>
-                      <td>{item?.status}</td>
-                      <td>{item?.type}</td>
-                    </tr>
-                  );
-                })
+              {/* Loading */}
+              {loading && (
+                <div className="text-center py-5 fw-semibold">
+                  Loading complaints...
+                </div>
               )}
-            </tbody>
-          </table>
+
+              {/* Error */}
+              {!loading && error && (
+                <div className="alert alert-danger text-center">
+                  {error}
+                </div>
+              )}
+
+              {/* Empty */}
+              {!loading && !error && data.length === 0 && (
+                <div className="alert alert-info text-center">
+                  No complaints found
+                </div>
+              )}
+
+              {/* Table */}
+              {!loading && !error && data.length > 0 && (
+                <div
+                  className="table-responsive"
+                  style={{ maxHeight: "70vh" }}
+                >
+                  <table className="table table-hover align-middle">
+                    <thead className="table-dark sticky-top">
+                      <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Type</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {data.map((item, idx) => (
+                        <tr key={item?.id || idx}>
+                          <td>{idx + 1}</td>
+                          <td className="fw-semibold">{item?.title}</td>
+                          <td className="text-muted">
+                            {item?.description}
+                          </td>
+                          <td>
+                            <span
+                              className={priorityBadge(item?.priority)}
+                            >
+                              {item?.priority || "N/A"}
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              className={statusBadge(item?.status)}
+                            >
+                              {item?.status || "N/A"}
+                            </span>
+                          </td>
+                          <td>{item?.type || "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

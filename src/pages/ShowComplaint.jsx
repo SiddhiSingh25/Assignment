@@ -20,7 +20,7 @@ const ShowComplaint = () => {
   }, []);
 
   return (
-    <div className="container-fluid vh-100 gradient">
+    <div className="container-fluid min-vh-100 gradient">
       
       <div className="row h-100 d-flex align-items-start justify-content-center">
         <div className="col-sm-6 mt-5">

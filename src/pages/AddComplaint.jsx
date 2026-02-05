@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const schema = yup
   .object()
@@ -24,6 +25,8 @@ const AddComplaint = () => {
     resolver: yupResolver(schema),
   });
 
+  let navigate = useNavigate()
+
   const complaintHandler = async (data) => {
     try {
       let res = await axios.post(
@@ -32,6 +35,7 @@ const AddComplaint = () => {
       );
       if (res) {
         Swal.fire('Add Complaint', res.message || "Successful" , 'Error');
+        navigate("/")
         reset()
       }
     } catch (error) {
